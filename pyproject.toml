@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "monadic-error"
+version = "1.0.0"
+description = "Monads used for handling Errors. Contains Either and Option."
+authors = ["Ian Kollipara <ian.kollipara@cune.org>"]
+readme = "README.md"
+packages = [{ include = "monadic_error" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
