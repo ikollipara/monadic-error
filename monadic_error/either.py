@@ -8,8 +8,7 @@ Either Monad
 
 # Imports
 from abc import ABC, abstractmethod
-from functools import wraps
-from typing import Self, TypeVar, Generic, Callable
+from typing import TypeVar, Generic, Callable
 
 L = TypeVar("L")
 R = TypeVar("R")
@@ -29,7 +28,7 @@ class Either(ABC, Generic[L, R]):
         self._inner = inner
     
     @abstractmethod
-    def map(self, f: Callable[[R], A]) -> Self[L, A]:
+    def map(self, f: Callable[[R], A]) -> "Either"[L, A]:
         """ Map against the right side.
         
         f: R -> A
@@ -37,7 +36,7 @@ class Either(ABC, Generic[L, R]):
         ...
     
     @abstractmethod
-    def left_map(self, f: Callable[[L], A]) -> Self[A, R]:
+    def left_map(self, f: Callable[[L], A]) -> "Either"[A, R]:
         """ Map against the left side.
         
         f: L -> A
@@ -46,18 +45,18 @@ class Either(ABC, Generic[L, R]):
         ...
     
     @abstractmethod
-    def lift(self, value: A) -> Self[L, A]:
+    def lift(self, value: A) -> "Either"[L, A]:
         """ Lift a value into the exception context. """
 
         ...
 
     
     @abstractmethod
-    def fmap(self, f: Callable[[R], Self[L, A]]) -> Self[L, A]:
+    def fmap(self, f: Callable[[R], "Either"[L, A]]) -> "Either"[L, A]:
         ...
     
     @abstractmethod
-    def left_fmap(self, f: Callable[[L], Self[A, R]]) -> Self[A, R]:
+    def left_fmap(self, f: Callable[[L], "Either"[A, R]]) -> "Either"[A, R]:
         ...
     
 class Left(Either[L, R]):
@@ -77,7 +76,7 @@ class Left(Either[L, R]):
     def left_fmap(self, f):
         return f(self._inner)
     
-    def lift(self, value: A) -> Self[L, A]:
+    def lift(self, value: A) -> "Either"[L, A]:
         return Left(None)
 
 class Right(Either[L, R]):
@@ -97,5 +96,5 @@ class Right(Either[L, R]):
     def left_fmap(self, f):
         return Right(self._inner)
     
-    def lift(self, value: A) -> Self[L, A]:
+    def lift(self, value: A) -> "Either"[L, A]:
         return Right(value)
