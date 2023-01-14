@@ -1,0 +1,16 @@
+name: publish
+on: [push]
+jobs:
+  publish_package:
+    name: "Publish the package to https://pypi.org"
+    runs-on: [ubuntu-18.04, macos-latest, windows-latest]
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ["3.11"]
+      - name: "Install Poetry"
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ["1.3"]
+      - name: "Publish Package"
+        run: poetry publish --build -u __token__ -p $token

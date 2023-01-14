@@ -8,14 +8,14 @@ Utility Function
 
 # Imports
 from functools import wraps
-from typing import Callable, Optional, TypeVar
-from .either import Either, Left, Right
+from typing import Any, Callable, Optional, TypeVar
+from .attempt import Attempt, Success, Failure, Result
 from .option import Option, Some, Nothing
 
 A = TypeVar("A")
 B = TypeVar("B")
 
-def option(f: Callable[..., A]):
+def option(f: Callable[..., A]) -> Callable[..., Option[A]]:
     """ Wrap a raising function and return an Option. """
 
     @wraps(f)
@@ -36,34 +36,34 @@ def from_optional(optional: Optional[A]) -> Option[A]:
     else:
         return Nothing()
 
-def either(f: Callable[..., A]):
-    """ Wrap a raising function and return an Either of Exception and the return type. """
+def attempt(f: Callable[..., A]) -> Callable[..., Result[A]]:
+    """ Wrap a raising function and return an Attempt of Exception and the return type. """
 
     @wraps(f)
-    def inner(*args, **kwargs) -> Either[Exception, A]:
+    def inner(*args, **kwargs) ->  Result[A]:
         try:
-            return Right(f(*args, **kwargs))
+            return Success(f(*args, **kwargs))
         except Exception as e:
-            return Left(e)
+            return Failure(e)
     
     return inner
 
-def note(o: Option[A], message: B) -> Either[B, A]:
+def note(o: Option[A], message: B) -> Attempt[B, A]:
     """ Convert an Option to Either by adding a note on the left. """
 
     match o:
         case Some(v):
-            return Right(v)
+            return Success(v)
         
         case Nothing():
-            return Left(message)
+            return Failure(message)
 
-def hush(e: Either[B, A]) -> Option[A]:
+def hush(e: Attempt[Any, A]) -> Option[A]: 
     """ Convert an Either to Option by silencing the left. """
 
     match e:
-        case Left(exc):
+        case Failure(exc):
             return Nothing()
         
-        case Right(v):
+        case Success(v):
             return Some(v)

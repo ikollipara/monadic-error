@@ -7,6 +7,6 @@ well with the current ecosystem.
 """
 
 # Exports
-from .either import Either, Left, Right
+from .attempt import Attempt, Success, Failure
 from .option import Option, Some, Nothing
-from .utils import hush, note, from_optional, option, either
+from .utils import hush, note, from_optional, option, attempt
