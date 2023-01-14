@@ -3,7 +3,7 @@ on: push
 jobs:
   publish_package:
     name: "Publish the package to https://pypi.org"
-    runs-on: [ubuntu-18.04, macos-latest, windows-latest]
+    runs-on: [macos-latest]
     steps:
       - uses: actions/setup-python@v4
         with:
