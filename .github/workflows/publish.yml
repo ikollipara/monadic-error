@@ -1,5 +1,5 @@
 name: publish
-on: [push]
+on: push
 jobs:
   publish_package:
     name: "Publish the package to https://pypi.org"
