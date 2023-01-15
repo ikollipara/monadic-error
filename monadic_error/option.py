@@ -30,7 +30,7 @@ class __Option(ABC, Generic[A]):
         self._inner = inner
     
     @abstractmethod
-    def map(self, func: Callable[[A], R]) -> "__Option"[R]:
+    def map(self, func: Callable[[A], R]) -> "__Option[R]":
         """ Apply the function to the given option.
         
         If something is there, then the function is
@@ -40,7 +40,7 @@ class __Option(ABC, Generic[A]):
         ...
     
     @abstractmethod
-    def fmap(self, func: Callable[[A], "__Option"[R]]) -> "__Option"[R]:
+    def fmap(self, func: Callable[[A], "__Option[R]"]) -> "__Option[R]":
         """ Apply the function to the given option.
         
         If something is there, then the function is applied,
@@ -66,10 +66,10 @@ class Some(__Option[A]):
     def __init__(self, inner: A) -> None:
         self._inner = inner
     
-    def map(self, func: Callable[[A], R]) -> "__Option"[R]:
+    def map(self, func: Callable[[A], R]) -> "__Option[R]":
         return Some(func(self._inner))
     
-    def fmap(self, func: Callable[[A], "__Option"[R]]) -> "__Option"[R]:
+    def fmap(self, func: Callable[[A], "__Option[R]"]) -> "__Option[R]":
         return func(self._inner)
     
     def unwrap_or(self, _: A) -> A:
@@ -89,10 +89,10 @@ class Nothing(__Option[A]):
     def __init__(self, inner: None = None) -> None:
         self._inner = inner
 
-    def map(self, _: Callable[[A], R]) -> "__Option"[R]:
+    def map(self, _: Callable[[A], R]) -> "__Option[R]":
         return Nothing(None)
     
-    def fmap(self, _: Callable[[A], "__Option"[R]]) -> "__Option"[R]:
+    def fmap(self, _: Callable[[A], "__Option[R]"]) -> "__Option[R]":
         return Nothing(None)
     
     def unwrap_or(self, default: A) -> A:

@@ -1,9 +1,9 @@
 """
-either.py
+attempt.py
 Ian Kollipara
 2023.01.06
 
-Either Monad
+Attempt Monad
 """
 
 # Imports
@@ -32,7 +32,7 @@ class __Attempt(ABC, Generic[F, S]):
         self._inner = inner
     
     @abstractmethod
-    def map(self, func: Callable[[S], A]) -> "__Attempt"[F, A]:
+    def map(self, func: Callable[[S], A]) -> "__Attempt[F, A]":
         """Apply the function to the given Attempt.
         
         If there is a success value, the function is applied
@@ -43,7 +43,7 @@ class __Attempt(ABC, Generic[F, S]):
         ...
     
     @abstractmethod
-    def fmap(self, func: Callable[[S], "__Attempt"[F, A]]) -> "__Attempt"[F, A]:
+    def fmap(self, func: Callable[[S], "__Attempt[F, A]"]) -> "__Attempt[F, A]":
         """Apply the function to the given attempt.
 
         If there is a success value, that is used for the function,
@@ -55,13 +55,13 @@ class __Attempt(ABC, Generic[F, S]):
         ...
     
     @abstractmethod
-    def map_f(self, func: Callable[[F], A]) -> "__Attempt"[A, S]:
+    def map_f(self, func: Callable[[F], A]) -> "__Attempt[A, S]":
         """Same as map, but for the failure track."""
 
         ...
     
     @abstractmethod
-    def fmap_f(self, func: Callable[[F], "__Attempt"[A, S]]) -> "__Attempt"[A, S]:
+    def fmap_f(self, func: Callable[[F], "__Attempt[A, S]"]) -> "__Attempt[A, S]":
         """Same as fmap, but for the failure track."""
 
         ...
@@ -95,16 +95,16 @@ class Success(__Attempt[F, S]):
     def __init__(self, inner: S) -> None:
         self._inner = inner
 
-    def map(self, func: Callable[[S], A]) -> "__Attempt"[F, A]:
+    def map(self, func: Callable[[S], A]) -> "__Attempt[F, A]":
         return Success(func(self._inner))
     
-    def fmap(self, func: Callable[[S], "__Attempt"[F, A]]) -> "__Attempt"[F, A]:
+    def fmap(self, func: Callable[[S], "__Attempt[F, A]"]) -> "__Attempt[F, A]":
         return func(self._inner)
     
-    def map_f(self, _: Callable[[F], A]) -> "__Attempt"[A, S]:
+    def map_f(self, _: Callable[[F], A]) -> "__Attempt[A, S]":
         return Success(self._inner)
     
-    def fmap_f(self, _: Callable[[F], "__Attempt"[A, S]]) -> "__Attempt"[A, S]:
+    def fmap_f(self, _: Callable[[F], "__Attempt[A, S]"]) -> "__Attempt[A, S]":
         return Success(self._inner)
     
     def unwrap_or(self, _: S) -> S:
@@ -129,16 +129,16 @@ class Failure(__Attempt[F, S]):
     def __init__(self, inner: F) -> None:
         self._inner = inner
     
-    def map(self, _: Callable[[S], A]) -> "__Attempt"[F, A]:
+    def map(self, _: Callable[[S], A]) -> "__Attempt[F, A]":
         return Failure(self._inner)
     
-    def fmap(self, _: Callable[[S], "__Attempt"[F, A]]) -> "__Attempt"[F, A]:
+    def fmap(self, _: Callable[[S], "__Attempt[F, A]"]) -> "__Attempt[F, A]":
         return Failure(self._inner)
     
-    def map_f(self, func: Callable[[F], A]) -> "__Attempt"[A, S]:
+    def map_f(self, func: Callable[[F], A]) -> "__Attempt[A, S]":
         return Failure(func(self._inner))
     
-    def fmap_f(self, func: Callable[[F], "__Attempt"[A, S]]) -> "__Attempt"[A, S]:
+    def fmap_f(self, func: Callable[[F], "__Attempt[A, S]"]) -> "__Attempt[A, S]":
         return func(self._inner)
     
     def unwrap_or(self, default: S) -> S:

@@ -9,4 +9,3 @@ well with the current ecosystem.
 # Exports
 from .attempt import Attempt, Success, Failure
 from .option import Option, Some, Nothing
-from .utils import hush, note, from_optional, option, attempt
