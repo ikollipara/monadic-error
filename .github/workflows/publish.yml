@@ -16,4 +16,4 @@ jobs:
         with:
           poetry-version: '1.7.1'
       - name: Publish
-        run: poetry publish -u __token__ -p ${{ secrets.TOKEN }}
+        run: poetry publish -u __token__ -p ${{ secrets.TOKEN }} --build
