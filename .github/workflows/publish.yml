@@ -1,0 +1,19 @@
+name: CI
+on: 
+  push:
+    branches: ["main"]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.15'
+      - name: Publish
+        run: poetry publish -u __token__ -p ${{ secrets.TOKEN }}
