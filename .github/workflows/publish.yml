@@ -14,6 +14,6 @@ jobs:
       - name: Run image
         uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: '1.15'
+          poetry-version: '1.7.1'
       - name: Publish
         run: poetry publish -u __token__ -p ${{ secrets.TOKEN }}
