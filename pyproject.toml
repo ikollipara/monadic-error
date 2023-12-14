@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "monadic-error"
-version = "2.0.1"
+version = "3.0.0"
 description = "Monads used for handling Errors. Contains Attempt and Option."
 authors = ["Ian Kollipara <ian.kollipara@cune.org>"]
 readme = "README.md"
