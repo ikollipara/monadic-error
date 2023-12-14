@@ -1,2 +1,6 @@
 dist
 .venv
+htmlcov
+.coverage
+tests/__pycache__
+monadic_error/__pycache__

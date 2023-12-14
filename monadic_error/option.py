@@ -8,14 +8,15 @@ Python Option Monad
 
 # Imports
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, Callable
+from typing import Callable, final
 
-A = TypeVar("A")
-R = TypeVar("R")
 
-class __Option(ABC, Generic[A]):
-    """ Option is a Maybe/Option Monad.
-    
+type Option[A] = Some[A] | Nothing[A]
+
+
+class _Option[A](ABC):
+    """Option is a Maybe/Option Monad.
+
     This represents a computation that could fail, but
     you don't care about why it failed.
 
@@ -27,79 +28,82 @@ class __Option(ABC, Generic[A]):
 
     @abstractmethod
     def __init__(self, inner: A | None) -> None:
-        self._inner = inner
-    
+        """
+        Create an Option from a value.
+        """
+
     @abstractmethod
-    def map(self, func: Callable[[A], R]) -> "__Option[R]":
-        """ Apply the function to the given option.
-        
+    def map[R](self, func: Callable[[A], R]) -> Option[R]:
+        """Apply the function to the given option.
+
         If something is there, then the function is
         applied, otherwise nothing happens.
         """
 
-        ...
-    
     @abstractmethod
-    def fmap(self, func: Callable[[A], "__Option[R]"]) -> "__Option[R]":
-        """ Apply the function to the given option.
-        
+    def fmap[R](self, func: Callable[[A], Option[R]]) -> Option[R]:
+        """Apply the function to the given option.
+
         If something is there, then the function is applied,
         otherwise nothing happens.
         This function allows the composition of option functions.
         """
 
-        ...
-    
     @abstractmethod
     def unwrap_or(self, default: A) -> A:
-        """ Unwrap the value if there is one, otherwise return default."""
+        """Unwrap the value if there is one, otherwise return default."""
 
-        ...
-    
 
-class Some(__Option[A]):
-    """ This represents the successful computation.
-    
+@final
+class Some[A](_Option[A]):
+    """This represents the successful computation.
+
     If the function returns correctly, then this is shown.
     """
 
     def __init__(self, inner: A) -> None:
         self._inner = inner
-    
-    def map(self, func: Callable[[A], R]) -> "__Option[R]":
+
+    def map[R](self, func: Callable[[A], R]) -> Option[R]:
         return Some(func(self._inner))
-    
-    def fmap(self, func: Callable[[A], "__Option[R]"]) -> "__Option[R]":
+
+    def fmap[R](self, func: Callable[[A], Option[R]]) -> Option[R]:
         return func(self._inner)
-    
+
     def unwrap_or(self, _: A) -> A:
         return self._inner
-    
+
     def __str__(self) -> str:
         return f"<Some _inner={self._inner}>"
-    
-    
 
-class Nothing(__Option[A]):
-    """ This represents the failure of a computation.
-    
+    def __eq__(self, __value: Option[A]) -> bool:
+        if isinstance(__value, Some):
+            return self._inner == __value._inner
+        else:
+            return False
+
+
+@final
+class Nothing[A](_Option[A]):
+    """This represents the failure of a computation.
+
     If the function does not return correctly, then this is shown.
     """
 
     def __init__(self, inner: None = None) -> None:
         self._inner = inner
 
-    def map(self, _: Callable[[A], R]) -> "__Option[R]":
+    def map[R](self, _: Callable[[A], R]) -> Option[R]:
         return Nothing(None)
-    
-    def fmap(self, _: Callable[[A], "__Option[R]"]) -> "__Option[R]":
+
+    def fmap[R](self, _: Callable[[A], Option[R]]) -> Option[R]:
         return Nothing(None)
-    
+
     def unwrap_or(self, default: A) -> A:
         return default
-    
+
     def __str__(self) -> str:
         return "<Nothing>"
-    
 
-Option = Some[A] | Nothing[A]
+    def __eq__(self, __value: Option[A]) -> bool:
+        return isinstance(__value, Nothing)
