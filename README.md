@@ -9,6 +9,23 @@ Both monads work with Python 3.10 pattern matching, and as well as MyPy exhausti
 All monads implement `map`, `fmap`, and `unwrap_or`. These all aid in their use in python.
 In addition there are a few utility functions for working with the objects during the execution of the program.
 
+## Installation 
+
+To install, run the following command from your terminal:
+```
+$ pip install monadic-error
+```
+
+Or modify your `requirements.txt` with the following line:
+```
+monadic-error==3.0.0
+```
+
+And run
+```
+$ pip install -r requirements.txt
+```
+
 ## Attempt
 
 Attempt is the Either monad. The name was chosen to signify how it should be used.
