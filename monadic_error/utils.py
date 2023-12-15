@@ -8,7 +8,7 @@ Utility Function
 
 # Imports
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, overload
 from .attempt import Attempt, Success, Failure, Result
 from .option import Option, Some, Nothing
 
@@ -49,7 +49,17 @@ def attempt[A](f: Callable[..., A]) -> Callable[..., Result[A]]:
     return inner
 
 
+@overload
+def note[A, B](o: Option[A], message: Callable[..., B]) -> Attempt[B, A]:
+    """Convert an Option to Either by adding a note on the left."""
+
+
+@overload
 def note[A, B](o: Option[A], message: B) -> Attempt[B, A]:
+    """Convert an Option to Either by adding a note on the left."""
+
+
+def note[A, B](o: Option[A], message: B | Callable[..., B]) -> Attempt[B, A]:
     """Convert an Option to Either by adding a note on the left."""
 
     match o:
@@ -57,6 +67,8 @@ def note[A, B](o: Option[A], message: B) -> Attempt[B, A]:
             return Success(v)
 
         case Nothing():
+            if callable(message):
+                return Failure(message())
             return Failure(message)
 
 
