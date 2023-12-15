@@ -9,7 +9,7 @@ Test Utility Functions
 # Imports
 from monadic_error.option import Some, Nothing
 from monadic_error.attempt import Success, Failure
-from monadic_error.utils import option, from_optional, attempt, note, hush
+from monadic_error.utils import option, from_optional, attempt, note, hush, flatten
 
 
 # Test that a raising function can be attempted
@@ -64,3 +64,16 @@ def test_note():
 def test_hush():
     assert hush(Success(1)) == Some(1)
     assert hush(Failure("Hello")) == Nothing()
+
+
+# Test that note can be passed a function
+def test_note_func():
+    assert note(Some(1), lambda: "Hello") == Success(1)
+    assert note(Nothing(), lambda: "Hello") == Failure("Hello")
+
+
+# Test that option can be flattened
+def test_flatten():
+    assert flatten(Some(Some(1))) == Some(1)
+    assert flatten(Some(Nothing())) == Nothing()
+    assert flatten(Nothing()) == Nothing()

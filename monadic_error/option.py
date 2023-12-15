@@ -8,13 +8,14 @@ Python Option Monad
 
 # Imports
 from abc import ABC, abstractmethod
-from typing import Callable, final
+from typing import Callable, final, Generic, overload, Iterable, TypeVar
 
+A = TypeVar("A", covariant=True)
 
 type Option[A] = Some[A] | Nothing[A]
 
 
-class _Option[A](ABC):
+class _Option(ABC, Generic[A]):
     """Option is a Maybe/Option Monad.
 
     This represents a computation that could fail, but
@@ -50,12 +51,45 @@ class _Option[A](ABC):
         """
 
     @abstractmethod
-    def unwrap_or(self, default: A) -> A:
+    def unwrap_or(self, default: A) -> A:  # type: ignore
         """Unwrap the value if there is one, otherwise return default."""
+
+    @abstractmethod
+    def filter(self, predicate: Callable[[A], bool]) -> Option[A]:
+        """Filter the Option based on the predicate."""
+
+    def is_some(self) -> bool:
+        """Check if the Option is Some."""
+        return isinstance(self, Some)
+
+    def is_nothing(self) -> bool:
+        """Check if the Option is Nothing."""
+        return isinstance(self, Nothing)
+
+    @overload
+    @abstractmethod
+    def zip[B](self, other: Option[B]) -> Option[tuple[A, B]]:
+        """Zip two Options together."""
+
+    @overload
+    @abstractmethod
+    def zip[*Bs](self, other: Option[Bs]) -> Option[tuple[A, *Bs]]:
+        """Zip two Options together."""
+
+    @abstractmethod
+    def unwrap(self) -> A:
+        """Unwrap the value. Will raise if there is no value."""
+
+    @abstractmethod
+    def __eq__(self, __value: "_Option") -> bool:
+        """Check if two Options are equal.
+
+        The comparison is based on the inner value.
+        """
 
 
 @final
-class Some[A](_Option[A]):
+class Some(_Option[A]):
     """This represents the successful computation.
 
     If the function returns correctly, then this is shown.
@@ -70,7 +104,25 @@ class Some[A](_Option[A]):
     def fmap[R](self, func: Callable[[A], Option[R]]) -> Option[R]:
         return func(self._inner)
 
-    def unwrap_or(self, _: A) -> A:
+    def unwrap_or(self, _: A) -> A:  # type: ignore
+        return self._inner
+
+    def filter(self, predicate: Callable[[A], bool]) -> Option[A]:
+        if predicate(self._inner):
+            return Some(self._inner)
+        else:
+            return Nothing()
+
+    def zip[B](self, other: Option[B]) -> Option[tuple[A, B]]:
+        if other.is_some():
+            if isinstance(other._inner, Iterable):
+                return Some((self._inner, *other._inner))  # type: ignore
+            return Some((self._inner, other.unwrap()))  # type: ignore
+        else:
+            return Nothing()
+
+    def unwrap(self) -> A:
+        """Unwrap the value."""
         return self._inner
 
     def __str__(self) -> str:
@@ -84,7 +136,7 @@ class Some[A](_Option[A]):
 
 
 @final
-class Nothing[A](_Option[A]):
+class Nothing(_Option[A]):
     """This represents the failure of a computation.
 
     If the function does not return correctly, then this is shown.
@@ -99,8 +151,18 @@ class Nothing[A](_Option[A]):
     def fmap[R](self, _: Callable[[A], Option[R]]) -> Option[R]:
         return Nothing(None)
 
-    def unwrap_or(self, default: A) -> A:
+    def unwrap_or(self, default: A) -> A:  # type: ignore
         return default
+
+    def filter(self, _: Callable[[A], bool]) -> Option[A]:
+        return Nothing()
+
+    def zip[B](self, _: Option[B]) -> Option[tuple[A, B]]:
+        return Nothing()
+
+    def unwrap(self) -> A:
+        """Unwrap the value."""
+        raise ValueError("Cannot unwrap Nothing")
 
     def __str__(self) -> str:
         return "<Nothing>"

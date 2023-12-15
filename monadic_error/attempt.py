@@ -71,6 +71,14 @@ class _Attempt[F, S](ABC):
     def raise_or(self) -> S:
         """Raise if there is something in the failure, otherwise return success."""
 
+    def is_success(self) -> bool:
+        """Check if the Attempt is a Success."""
+        return isinstance(self, Success)
+
+    def is_failure(self) -> bool:
+        """Check if the Attempt is a Failure."""
+        return isinstance(self, Failure)
+
 
 @final
 class Success[F, S](_Attempt[F, S]):

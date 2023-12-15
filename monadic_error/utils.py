@@ -8,7 +8,7 @@ Utility Function
 
 # Imports
 from functools import wraps
-from typing import Any, Callable, Optional, overload
+from typing import Any, Callable, Optional, overload, TypeVar
 from .attempt import Attempt, Success, Failure, Result
 from .option import Option, Some, Nothing
 
@@ -81,3 +81,17 @@ def hush[A](e: Attempt[Any, A]) -> Option[A]:
 
         case Success(v):
             return Some(v)
+
+
+A = TypeVar("A", covariant=True)
+
+
+def flatten(o: Option[Option[A]]) -> Option[A]:
+    """Flatten an Option of an Option."""
+
+    match o:
+        case Some(v):
+            return v
+
+        case _:
+            return Nothing()

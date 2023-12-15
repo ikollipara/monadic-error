@@ -126,3 +126,23 @@ def test_success_str():
 # Test Failure String
 def test_failure_str():
     assert str(Failure(1)) == "<Failure _inner=1>"
+
+
+# Test that Success is_success
+def test_success_is_success():
+    assert Success(1).is_success()
+
+
+# Test that Failure is not_success
+def test_failure_is_not_success():
+    assert not Failure(1).is_success()
+
+
+# Test that Success is not failure
+def test_success_is_not_failure():
+    assert not Success(1).is_failure()
+
+
+# Test that Failure is failure
+def test_failure_is_failure():
+    assert Failure(1).is_failure()
