@@ -8,7 +8,7 @@ Python Option Monad
 
 # Imports
 from abc import ABC, abstractmethod
-from typing import Callable, final, Generic, overload, Iterable, TypeVar
+from typing import Callable, TypeGuard, final, Generic, overload, Iterable, TypeVar
 
 A = TypeVar("A", covariant=True)
 
@@ -58,11 +58,11 @@ class _Option(ABC, Generic[A]):
     def filter(self, predicate: Callable[[A], bool]) -> Option[A]:
         """Filter the Option based on the predicate."""
 
-    def is_some(self) -> bool:
+    def is_some(self) -> TypeGuard["Some[A]"]: # type: ignore
         """Check if the Option is Some."""
         return isinstance(self, Some)
 
-    def is_nothing(self) -> bool:
+    def is_nothing(self) -> TypeGuard["Nothing[A]"]: # type: ignore
         """Check if the Option is Nothing."""
         return isinstance(self, Nothing)
 

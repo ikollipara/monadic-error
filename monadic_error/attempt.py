@@ -8,7 +8,7 @@ Attempt Monad
 
 # Imports
 from abc import ABC, abstractmethod
-from typing import Callable, final
+from typing import Callable, final, TypeGuard
 
 type Attempt[F, S] = Success[F, S] | Failure[F, S]
 type Result[S] = Attempt[Exception, S]
@@ -71,11 +71,11 @@ class _Attempt[F, S](ABC):
     def raise_or(self) -> S:
         """Raise if there is something in the failure, otherwise return success."""
 
-    def is_success(self) -> bool:
+    def is_success(self) -> TypeGuard["Success[F, S]"]: # type: ignore
         """Check if the Attempt is a Success."""
         return isinstance(self, Success)
 
-    def is_failure(self) -> bool:
+    def is_failure(self) -> TypeGuard["Failure[F, S]"]: # type: ignore
         """Check if the Attempt is a Failure."""
         return isinstance(self, Failure)
 
